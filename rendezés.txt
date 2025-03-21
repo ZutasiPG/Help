@@ -1,0 +1,12 @@
+static int[] BubbleSort(int[] tomb) {
+            for (int i = tomb.Length-1; i >= 0; i--) {
+                for (int j = 0; j < i; j++) {
+                    if (tomb[i] < tomb[j]){
+                        int tmp = tomb[i];
+                        tomb[i] = tomb[j];
+                        tomb[j] = tmp;
+                    }
+                }
+            }
+            return tomb;
+        }
