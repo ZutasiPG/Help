@@ -9,4 +9,16 @@ static int[] BubbleSort(int[] tomb) {
                 }
             }
             return tomb;
+}
+static List<adat> BubbleSort(List<adat> list){
+    for (int i = list.Count - 1; i >= 0; i--){
+        for (int j = 0; j < i; j++){
+            if (list[i].dateYear < list[j].dateYear){
+                adat tmp = list[i];
+                list[i] =   list[j];
+                list[j] = tmp;
+            }
         }
+    }
+    return list;
+}
