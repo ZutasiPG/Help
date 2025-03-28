@@ -1,0 +1,10 @@
+var serverConnect = new MySqlConnectionStringBuilder { Server = "127.0.0.1", Database = "ingatlan", UserID = "root", Password = "" };
+var kapcsolat = new MySqlConnection(serverConnect.ConnectionString);
+kapcsolat.Open();
+var lekerdezes = kapcsolat.CreateCommand();
+lekerdezes.CommandText = "SELECT AVG(realestates.area) FROM realestates WHERE realestates.floors = 0";
+var olvaso = lekerdezes.ExecuteReader();
+while (olvaso.Read()) {
+    Console.WriteLine($"A földszinti ingatlanok átlagos alapterülete: {olvaso.GetDouble(0):0.00} m2");
+}
+kapcsolat.Close();
