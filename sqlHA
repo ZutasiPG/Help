@@ -1,0 +1,73 @@
+static void addDiak(MySqlConnection con,string nev,int szulEv){
+            string cmdStr = "insert into diak(nev,szulEv) values(@nev,@szulEv)";
+            MySqlCommand cmd = new MySqlCommand(cmdStr,con);
+            cmd.Parameters.AddWithValue("@nev",nev);
+            cmd.Parameters.AddWithValue("@szulEv", szulEv);
+            int sorok = cmd.ExecuteNonQuery();
+            Console.WriteLine($"{sorok} sor érintett.");
+        }
+        static List<(string,int)> fetchDiakok(MySqlConnection con){
+            string cmdStr = "SELECT * FROM `diak`";
+            MySqlCommand cmd = new MySqlCommand(cmdStr,con);
+            MySqlDataReader reader = cmd.ExecuteReader();
+            List<(string,int)> diakok = new List<(string,int)> ();
+            while(reader.Read()) { 
+                string nev = reader.GetString("nev");
+                int szulEv = reader.GetInt32("szulEv");
+                diakok.Add((nev, szulEv));
+            }
+            return diakok;
+        }
+        static void Main(string[] args){
+            string connectionString = "server=localhost;database=teszt;username=root;password=mysql";
+            using (MySqlConnection connection = new MySqlConnection(connectionString)) {
+                try{
+                    connection.Open();
+                    Console.WriteLine("Sikeres kapcsolódás!");
+                    Console.WriteLine("1. Diák hozzáadása");
+                    Console.WriteLine("2. Diákok lekérdezése");
+                    switch (Console.ReadKey().KeyChar)
+                    {
+                        case '1':
+                            string nev = "";
+                            while (nev.ToLower() != "q")
+                            {
+                                int szulEv = 0;
+                                do
+                                {
+                                    Console.Write("\bKérem a diák nevét: ");
+                                    nev = Console.ReadLine();
+                                    if (nev == "q") break;
+                                    Console.Write("Kérem a diák születési évét: ");
+                                    try
+                                    {
+                                        szulEv = int.Parse(Console.ReadLine());
+                                    }
+                                    catch (Exception)
+                                    {
+                                        Console.WriteLine("Hibás adat!");
+                                    }
+                                } while (nev == "" && szulEv == 0);
+                                if (nev != "" && szulEv != 0) addDiak(connection, nev, szulEv);
+                            }
+                            break;
+                        case '2':
+                            List<(string nev, int szulEv)> diakok = fetchDiakok(connection);
+                            foreach (var diak in diakok)
+                            {
+                                Console.WriteLine($"Diák neve: {diak.nev}");
+                                Console.WriteLine($"Diák születési éve: {diak.szulEv}");
+                                Console.WriteLine();
+                            }
+                            diakok.Clear();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                catch (Exception e){
+                    Console.WriteLine(e.Message);
+                }
+            }
+            Console.WriteLine("Program vége...");
+            Console.ReadKey();
